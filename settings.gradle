@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "GithubShowCaseApp"
 include ':app'
+include ':network_module'
