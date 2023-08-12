@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.githubshowcaseapp.R
+import com.example.githubshowcaseapp.databinding.ActivityMainBinding
 import com.example.githubshowcaseapp.mappers.NetworkDataState
 import com.example.githubshowcaseapp.viewmodels.CustomViewModelFactory
 import com.example.githubshowcaseapp.viewmodels.SharedViewModel
@@ -15,27 +17,30 @@ import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
-    lateinit var viewModel: SharedViewModel
+    lateinit var mViewModel: SharedViewModel
+    private lateinit var mBinding : ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel =
+        mViewModel =
             ViewModelProvider(this, CustomViewModelFactory()).get(SharedViewModel::class.java)
         installSplashScreen()
-        setContentView(R.layout.activity_main)
-        viewModel.fetchRepositoryDetails("Android")
+        mBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        mViewModel.fetchRepositoryDetails("Android")
         collectGithubRepositoryData()
 
     }
 
-    fun collectGithubRepositoryData() {
+    private fun collectGithubRepositoryData() {
         lifecycleScope.launchWhenStarted {
-            viewModel.networkDataState.collectLatest {
+            mViewModel.networkDataState.collectLatest {
               when(it){
                   is NetworkDataState.LoadingState -> {
                       Log.d("apiTest loading", "loading state")
                   }
                   is NetworkDataState.SuccessState -> {
                       Log.d("apiTest success", it.itemList.toString())
+                      mBinding.actText.text = it.itemList.toString()
                   }
                   is NetworkDataState.ErrorState -> {
                       Log.d("apiTest error", it.error)

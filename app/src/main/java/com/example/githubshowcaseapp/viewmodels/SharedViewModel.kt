@@ -15,8 +15,11 @@ class SharedViewModel(
     private val dataRepository: DataRepository,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+
      private val _networkDataState = MutableStateFlow<NetworkDataState>(NetworkDataState.ResetState)
       var networkDataState = _networkDataState.asStateFlow()
+
+
       fun fetchRepositoryDetails(searchName: String){
         viewModelScope.launch {
             dataRepository.fetchRepositoryDetails(searchName).collect {
