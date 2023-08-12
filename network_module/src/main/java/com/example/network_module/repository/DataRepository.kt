@@ -19,4 +19,11 @@ class DataRepository(
         }.catch { this.emit(NetworkCallStatus.Error(msg = it.message, data = null)) }
             .flowOn(coroutineDisPatcher)
 
+    suspend fun fetchRepositoriesIssues(fullName: String) =
+        flow {
+            emit(NetworkCallStatus.Loading())
+            emit(service.fetchRepositoriesIssues(fullName = fullName))
+        }.catch { this.emit(NetworkCallStatus.Error(msg = it.message, data = null)) }
+            .flowOn(coroutineDisPatcher)
+
 }

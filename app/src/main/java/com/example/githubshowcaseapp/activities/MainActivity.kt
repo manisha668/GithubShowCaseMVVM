@@ -1,6 +1,7 @@
 package com.example.githubshowcaseapp.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
@@ -10,7 +11,8 @@ import com.example.githubshowcaseapp.R
 import com.example.githubshowcaseapp.adapters.GithubRepoAdapter
 import com.example.githubshowcaseapp.databinding.ActivityMainBinding
 import com.example.githubshowcaseapp.hideLoader
-import com.example.githubshowcaseapp.mappers.NetworkDataState
+import com.example.githubshowcaseapp.mappers.IssuesDataState
+import com.example.githubshowcaseapp.mappers.RepositoryDataState
 import com.example.githubshowcaseapp.showLoader
 import com.example.githubshowcaseapp.viewmodels.CustomViewModelFactory
 import com.example.githubshowcaseapp.viewmodels.SharedViewModel
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mViewModel.fetchRepositoryDetails("kotlin")
         collectGithubRepositoryData()
+        collectRepoIssuesData()
 
     }
 
@@ -38,14 +41,14 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launchWhenStarted {
             mViewModel.networkDataState.collectLatest {
                 when (it) {
-                    is NetworkDataState.LoadingState -> {
+                    is RepositoryDataState.LoadingState -> {
                         mBinding.loader.showLoader()
                     }
-                    is NetworkDataState.SuccessState -> {
+                    is RepositoryDataState.SuccessState -> {
                         setAdapter(it.itemList)
                         mBinding.loader.hideLoader()
                     }
-                    is NetworkDataState.ErrorState -> {
+                    is RepositoryDataState.ErrorState -> {
                         mBinding.loader.hideLoader()
                     }
                     else -> Unit
@@ -55,6 +58,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter(itemList: List<Item>?) {
-        mBinding.rvItemList.adapter = itemList?.let { GithubRepoAdapter(itemList = it) }
+        mBinding.rvItemList.adapter = itemList?.let { GithubRepoAdapter(itemList = it){ item ->
+            item?.full_name?.let { it1 -> mViewModel.fetchRepositoriesIssues(fullName = it1) }
+        } }
+    }
+
+    private fun collectRepoIssuesData() {
+        lifecycleScope.launchWhenStarted {
+            mViewModel.issuesDataState.collectLatest {
+                when (it) {
+                    is IssuesDataState.LoadingState -> {
+                        Log.d("testIssues loading", it.toString())
+                        mBinding.loader.showLoader()
+                    }
+                    is IssuesDataState.SuccessState -> {
+                        Log.d("testIssues", it.issues.toString())
+                        mBinding.loader.hideLoader()
+                    }
+                    is IssuesDataState.ErrorState -> {
+                        Log.d("testIssues error", it.error)
+                        mBinding.loader.hideLoader()
+                    }
+                    else -> Unit
+                }
+            }
+        }
     }
 }
