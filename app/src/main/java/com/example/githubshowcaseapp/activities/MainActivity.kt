@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider(this, CustomViewModelFactory()).get(SharedViewModel::class.java)
         installSplashScreen()
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        mViewModel.fetchRepositoryDetails("Android")
+        mViewModel.fetchRepositoryDetails("kotlin")
         collectGithubRepositoryData()
 
     }

@@ -6,8 +6,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_purple"
         android:orientation="vertical"
+        android:background="@color/light_grey"
         tools:context=".activities.MainActivity">
 
         <SearchView
@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:queryHint="Kotlin" />
+            android:queryHint="Kotlin"
+            android:focusedByDefault="true"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_item_list"
