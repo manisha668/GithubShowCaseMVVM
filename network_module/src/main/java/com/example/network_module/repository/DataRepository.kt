@@ -6,4 +6,6 @@ class DataRepository(
     private val service: NetworkService
 ) {
 
+    fun fetchRepositoryDetails(searchNAme : String) {}
+
 }
