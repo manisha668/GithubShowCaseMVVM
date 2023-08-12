@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                   }
                   is NetworkDataState.SuccessState -> {
                       Log.d("apiTest success", it.itemList.toString())
-                      mBinding.actText.text = it.itemList.toString()
                   }
                   is NetworkDataState.ErrorState -> {
                       Log.d("apiTest error", it.error)
