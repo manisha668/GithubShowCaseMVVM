@@ -1,7 +1,6 @@
 package com.example.githubshowcaseapp.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
@@ -10,7 +9,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.githubshowcaseapp.R
 import com.example.githubshowcaseapp.adapters.GithubRepoAdapter
 import com.example.githubshowcaseapp.databinding.ActivityMainBinding
+import com.example.githubshowcaseapp.hideLoader
 import com.example.githubshowcaseapp.mappers.NetworkDataState
+import com.example.githubshowcaseapp.showLoader
 import com.example.githubshowcaseapp.viewmodels.CustomViewModelFactory
 import com.example.githubshowcaseapp.viewmodels.SharedViewModel
 import com.example.network_module.model.Item
@@ -38,13 +39,14 @@ class MainActivity : AppCompatActivity() {
             mViewModel.networkDataState.collectLatest {
                 when (it) {
                     is NetworkDataState.LoadingState -> {
-                        Log.d("apiTest loading", "loading state")
+                        mBinding.loader.showLoader()
                     }
                     is NetworkDataState.SuccessState -> {
                         setAdapter(it.itemList)
+                        mBinding.loader.hideLoader()
                     }
                     is NetworkDataState.ErrorState -> {
-                        Log.d("apiTest error", it.error)
+                        mBinding.loader.hideLoader()
                     }
                     else -> Unit
                 }
