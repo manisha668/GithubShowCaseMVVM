@@ -10,16 +10,10 @@ object NetworkResolver {
 
     private const val BASE_URL = "https://api.github.com/"
 
-    private val okHttpClient by lazy {
-        val interceptor = HttpLoggingInterceptor()
-        OkHttpClient.Builder().addInterceptor(interceptor).build()
-    }
-
     val retrofitInstance: NetworkRequest by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
             .build()
             .create(NetworkRequest::class.java)
     }

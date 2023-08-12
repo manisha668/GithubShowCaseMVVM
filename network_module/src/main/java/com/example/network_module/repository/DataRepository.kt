@@ -12,7 +12,7 @@ class DataRepository(
     private val coroutineDisPatcher: CoroutineDispatcher
 ) {
 
-    fun fetchRepositoryDetails(searchName: String) =
+    suspend fun fetchRepositoryDetails(searchName: String) =
         flow {
             emit(NetworkCallStatus.Loading())
             emit(service.fetchRepoDetails(searchName = searchName))

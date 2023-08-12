@@ -10,7 +10,7 @@ interface NetworkRequest {
      * fetch the repositories data from github
      */
     @GET("search/repositories")
-    fun getRepositoriesDetails(
+    suspend fun getRepositoriesDetails(
         @Query("q") searchName: String
     ): Response<GitHubDataResponse>
 }

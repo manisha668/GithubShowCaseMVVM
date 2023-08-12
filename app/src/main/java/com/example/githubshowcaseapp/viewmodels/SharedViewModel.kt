@@ -1,13 +1,12 @@
 package com.example.githubshowcaseapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.network_module.network.NetworkCallStatus
 import com.example.network_module.repository.DataRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class SharedViewModel(
@@ -15,21 +14,21 @@ class SharedViewModel(
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    fun fetchRepositoryDetails(searchName: String) = flow {
+     fun fetchRepositoryDetails(searchName: String) {
         viewModelScope.launch {
             dataRepository.fetchRepositoryDetails(searchName).collect {
-                when (it) {
+                when(it) {
                     is NetworkCallStatus.Loading -> {
-                        emit(NetworkCallStatus.Loading(data = null))
+                        Log.d("apiTest loading", it.data.toString())
                     }
                     is NetworkCallStatus.Success -> {
-                        emit(NetworkCallStatus.Success(it.data))
+                        Log.d("apiTest success", it.data.toString())
                     }
                     is NetworkCallStatus.Error -> {
-                        emit(NetworkCallStatus.Error(data = null, msg = it.msg))
+                        Log.d("apiTest error", it.msg.toString())
                     }
                 }
             }
         }
-    }.flowOn(coroutineDispatcher)
+    }
 }

@@ -8,7 +8,7 @@ class NetworkService(
     /**
      * fetch the repositories data from github
      */
-    fun fetchRepoDetails(searchName : String) =
+    suspend fun fetchRepoDetails(searchName : String) =
         this@NetworkService.getParsedApiResponse(req.getRepositoriesDetails(searchName = searchName))
 
     /**
