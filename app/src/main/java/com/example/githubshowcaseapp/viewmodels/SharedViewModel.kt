@@ -1,11 +1,13 @@
 package com.example.githubshowcaseapp.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.githubshowcaseapp.mappers.NetworkDataState
 import com.example.network_module.network.NetworkCallStatus
 import com.example.network_module.repository.DataRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -13,19 +15,20 @@ class SharedViewModel(
     private val dataRepository: DataRepository,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
-
-     fun fetchRepositoryDetails(searchName: String) {
+     private val _networkDataState = MutableStateFlow<NetworkDataState>(NetworkDataState.ResetState)
+      var networkDataState = _networkDataState.asStateFlow()
+      fun fetchRepositoryDetails(searchName: String){
         viewModelScope.launch {
             dataRepository.fetchRepositoryDetails(searchName).collect {
                 when(it) {
                     is NetworkCallStatus.Loading -> {
-                        Log.d("apiTest loading", it.data.toString())
+                        _networkDataState.value = NetworkDataState.LoadingState
                     }
                     is NetworkCallStatus.Success -> {
-                        Log.d("apiTest success", it.data.toString())
+                        _networkDataState.value = NetworkDataState.SuccessState(itemList = it.data?.items)
                     }
                     is NetworkCallStatus.Error -> {
-                        Log.d("apiTest error", it.msg.toString())
+                        _networkDataState.value = NetworkDataState.ErrorState(error = it.msg.toString())
                     }
                 }
             }
