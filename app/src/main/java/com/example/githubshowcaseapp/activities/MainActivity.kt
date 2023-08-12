@@ -2,9 +2,11 @@ package com.example.githubshowcaseapp.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.adapters.SearchViewBindingAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.githubshowcaseapp.R
@@ -19,6 +21,10 @@ import com.example.githubshowcaseapp.viewmodels.SharedViewModel
 import com.example.network_module.model.Item
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import androidx.databinding.adapters.SearchViewBindingAdapter.setOnQueryTextListener
+
+
+
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
@@ -35,6 +41,31 @@ class MainActivity : AppCompatActivity() {
         collectGithubRepositoryData()
         collectRepoIssuesData()
 
+    }
+
+    private fun setAdapter(itemList: List<Item>?) {
+        mBinding.rvItemList.adapter = itemList?.let { GithubRepoAdapter(itemList = it){ item ->
+            item?.full_name?.let { it1 -> mViewModel.fetchRepositoriesIssues(fullName = it1) }
+        } }
+    }
+
+    private fun setSearchView(){
+        mBinding.searchView.apply {
+         isActivated = true
+            setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    mViewModel.fetchRepositoryDetails(searchName = query)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+
+                    return false
+                }
+            })
+
+        }
     }
 
     private fun collectGithubRepositoryData() {
@@ -55,12 +86,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun setAdapter(itemList: List<Item>?) {
-        mBinding.rvItemList.adapter = itemList?.let { GithubRepoAdapter(itemList = it){ item ->
-            item?.full_name?.let { it1 -> mViewModel.fetchRepositoriesIssues(fullName = it1) }
-        } }
     }
 
     private fun collectRepoIssuesData() {

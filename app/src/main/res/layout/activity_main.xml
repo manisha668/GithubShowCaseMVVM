@@ -11,7 +11,7 @@
         tools:context=".activities.MainActivity">
 
         <SearchView
-            android:id="@+id/sv_item_name"
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -27,7 +27,7 @@
             android:paddingVertical="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sv_item_name"
+            app:layout_constraintTop_toBottomOf="@id/search_view"
             app:layout_constraintBottom_toBottomOf="parent">
             
             <ProgressBar
