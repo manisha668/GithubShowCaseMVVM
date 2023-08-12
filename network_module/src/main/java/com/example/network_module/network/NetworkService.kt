@@ -21,9 +21,9 @@ class NetworkService(
                 this@runCatching.isSuccessful -> NetworkCallStatus.Success(data = this@runCatching.body())
                 else -> {
                     NetworkCallStatus.Error(
-                        msg = this@runCatching.errorBody()?.charStream()?.readText()
+                        msg = this@runCatching.errorBody()?.charStream()?.toString()
                     )
                 }
             }
-        }
+        }.getOrThrow()
 }

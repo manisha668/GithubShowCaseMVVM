@@ -9,7 +9,7 @@ interface NetworkRequest {
     /**
      * fetch the repositories data from github
      */
-    @GET
+    @GET("search/repositories")
     fun getRepositoriesDetails(
         @Query("q") searchName: String
     ): Response<GitHubDataResponse>
