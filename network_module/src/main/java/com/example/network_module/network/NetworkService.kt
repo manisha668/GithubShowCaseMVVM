@@ -18,6 +18,12 @@ class NetworkService(
         this@NetworkService.getParsedApiResponse(req.getRepositoriesIssues(fullName = fullName))
 
     /**
+     * fetch the repositories contributors from github for a selected repo
+     */
+    suspend fun fetchRepositoriesContributors(fullName : String) =
+        this@NetworkService.getParsedApiResponse(req.getRepositoriesContributors(fullName = fullName))
+
+    /**
      * The method helps in wrapping the api response with [Response] and directly returns the data if
      * successful else error message will be returned
      */

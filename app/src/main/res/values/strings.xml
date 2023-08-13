@@ -3,4 +3,13 @@
     <string name="repo_name">Repo Name :</string>
     <string name="language_used">Language used :</string>
     <string name="description">Description :</string>
+    <string name="issues">Top Three Issues :\n\n
+        1. %1s\n
+        2. %2s\n
+        3. %4s</string>
+    <string name="contributors">Top Three Contributors of the repo are :\n\n
+        1. %1s\n
+        2. %2s\n
+        3. %4s</string>
+    <string name="ok">OK</string>
 </resources>

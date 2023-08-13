@@ -1,5 +1,6 @@
 package com.example.network_module.network
 
+import com.example.network_module.model.ContributorsDataItem
 import com.example.network_module.model.GitHubDataResponse
 import com.example.network_module.model.RepoIssuesItem
 import retrofit2.Response
@@ -24,4 +25,13 @@ interface NetworkRequest {
     suspend fun getRepositoriesIssues(
         @Path(value = "full_name", encoded = true) fullName: String
     ): Response<List<RepoIssuesItem>>
+
+    /**
+     * fetch the repositories contributors from github
+     * @param fullName
+     */
+    @GET("repos/{full_name}/contributors")
+    suspend fun getRepositoriesContributors(
+        @Path(value = "full_name", encoded = true) fullName: String
+    ): Response<List<ContributorsDataItem>>
 }

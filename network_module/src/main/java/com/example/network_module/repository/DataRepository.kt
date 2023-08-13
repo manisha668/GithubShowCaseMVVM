@@ -26,4 +26,11 @@ class DataRepository(
         }.catch { this.emit(NetworkCallStatus.Error(msg = it.message, data = null)) }
             .flowOn(coroutineDisPatcher)
 
+    suspend fun fetchRepositoriesContributors(fullName: String) =
+        flow {
+            emit(NetworkCallStatus.Loading())
+            emit(service.fetchRepositoriesContributors(fullName = fullName))
+        }.catch { this.emit(NetworkCallStatus.Error(msg = it.message, data = null)) }
+            .flowOn(coroutineDisPatcher)
+
 }
