@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.githubshowcaseapp.R
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     private var issuesString = ""
     private var contributorsString = ""
+    private var searchObserverLD = MutableLiveData<String>("kotlin")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +42,14 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider(this, CustomViewModelFactory()).get(SharedViewModel::class.java)
         installSplashScreen()
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setSearchView()
         mViewModel.fetchRepositoryDetails("kotlin")
         collectGithubRepositoryData()
         collectRepoIssuesData()
         collectRepoContributorsData()
+        searchObserverLD.observe(this, Observer {
+            mViewModel.fetchRepositoryDetails(searchName = it)
+        })
     }
 
     private fun setAdapter(itemList: List<Item>?) {
@@ -61,12 +68,11 @@ class MainActivity : AppCompatActivity() {
             setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    mViewModel.fetchRepositoryDetails(searchName = query)
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-
+                    searchObserverLD.value = newText
                     return false
                 }
             })
