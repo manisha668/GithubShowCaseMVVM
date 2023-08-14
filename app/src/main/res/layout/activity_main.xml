@@ -14,7 +14,7 @@
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/dp_16"
             android:queryHint="Kotlin"
             android:focusedByDefault="true"
             app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp"
+            android:paddingVertical="@dimen/dp_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_view"
@@ -34,18 +34,18 @@
                 android:id="@+id/loader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="40dp"
-                android:minWidth="40dp"
+                android:minHeight="@dimen/dp_40"
+                android:minWidth="@dimen/dp_40"
                 android:layout_gravity="center"
-                android:translationZ="1dp"
+                android:translationZ="@dimen/dp_1"
                 android:indeterminateTint="@color/purple_200"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_item_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="@dimen/dp_8"
+            android:layout_marginVertical="@dimen/dp_16"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="10"
             tools:listitem="@layout/layout_item_list" />
