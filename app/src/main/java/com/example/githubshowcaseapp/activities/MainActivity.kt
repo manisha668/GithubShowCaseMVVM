@@ -1,7 +1,6 @@
 package com.example.githubshowcaseapp.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,12 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.githubshowcaseapp.R
 import com.example.githubshowcaseapp.adapters.GithubRepoAdapter
+import com.example.githubshowcaseapp.constants.AppConstants.NO_CONTRIBUTORS_AVAILABLE
+import com.example.githubshowcaseapp.constants.AppConstants.NO_ISSUES_AVAILABLE
 import com.example.githubshowcaseapp.databinding.ActivityMainBinding
 import com.example.githubshowcaseapp.dialogs.DetailsViewDialog
-import com.example.githubshowcaseapp.utilities.hideView
 import com.example.githubshowcaseapp.mappers.ContributorsDataState
 import com.example.githubshowcaseapp.mappers.IssuesDataState
 import com.example.githubshowcaseapp.mappers.RepositoryDataState
+import com.example.githubshowcaseapp.utilities.hideView
 import com.example.githubshowcaseapp.utilities.showToast
 import com.example.githubshowcaseapp.utilities.showView
 import com.example.githubshowcaseapp.viewmodels.CustomViewModelFactory
@@ -30,8 +31,8 @@ import kotlinx.coroutines.flow.collectLatest
 class MainActivity : AppCompatActivity() {
     lateinit var mViewModel: SharedViewModel
     private lateinit var mBinding: ActivityMainBinding
-    private var issuesString = ""
-    private var contributorsString = ""
+    private var issuesString = NO_ISSUES_AVAILABLE
+    private var contributorsString = NO_CONTRIBUTORS_AVAILABLE
     private var mDefaultLang = "kotlin"
     private var searchObserverLD = MutableLiveData(mDefaultLang)
 
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         collectGithubRepositoryData()
         collectRepoIssuesData()
         collectRepoContributorsData()
+        //observing the livedata to check if any keyword was searched to fetch the api data
         searchObserverLD.observe(this, {
             mViewModel.fetchRepositoryDetails(searchName = it)
         })
@@ -54,13 +56,21 @@ class MainActivity : AppCompatActivity() {
     private fun setAdapter(itemList: List<Item>?) {
         mBinding.rvItemList.adapter = itemList?.let {
             GithubRepoAdapter(itemList = it) { item ->
-                    mBinding.loader.showView()
-                    item?.full_name?.let { it1 -> mViewModel.fetchIssuesAndContributorDetails(fullName = it1) }
-                DetailsViewDialog(this,mBinding.root as ViewGroup, issuesString, contributorsString)
+                mBinding.loader.showView()
+                item?.full_name?.let { it1 -> mViewModel.fetchIssuesAndContributorDetails(fullName = it1) }
+                DetailsViewDialog(
+                    this,
+                    mBinding.root as ViewGroup,
+                    issuesString,
+                    contributorsString
+                )
             }
         }
     }
 
+    /**
+     * fetch repository data from server when a keyword is searched and enter is pressed
+     */
     private fun setSearchView() {
         mBinding.searchView.apply {
             isActivated = true
@@ -79,6 +89,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Collect the repository data from api
+     * and set the adapter to show the list
+     */
     private fun collectGithubRepositoryData() {
         lifecycleScope.launchWhenStarted {
             mViewModel.networkDataState.collectLatest {
@@ -100,6 +114,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Collect the issues data from api
+     */
     private fun collectRepoIssuesData() {
         lifecycleScope.launchWhenStarted {
             mViewModel.issuesDataState.collectLatest {
@@ -108,8 +125,13 @@ class MainActivity : AppCompatActivity() {
                         mBinding.loader.showView()
                     }
                     is IssuesDataState.SuccessState -> {
-                        val issuesPair =IssuesDataState.processIssuesData(it.issues)
-                        issuesString = getString(R.string.issues,issuesPair.first,issuesPair.second,issuesPair.third)
+                        val issuesPair = IssuesDataState.processIssuesData(it.issues)
+                        issuesString = getString(
+                            R.string.issues,
+                            issuesPair.first,
+                            issuesPair.second,
+                            issuesPair.third
+                        )
                         mBinding.loader.hideView()
                     }
                     is IssuesDataState.ErrorState -> {
@@ -122,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Collect the contributors data from api
+     */
     private fun collectRepoContributorsData() {
         lifecycleScope.launchWhenStarted {
             mViewModel.contributors.collectLatest {
@@ -130,8 +155,14 @@ class MainActivity : AppCompatActivity() {
                         mBinding.loader.showView()
                     }
                     is ContributorsDataState.SuccessState -> {
-                        val contributionPair = ContributorsDataState.processContributorsData(it.contributions)
-                        contributorsString = getString(R.string.contributors,contributionPair.first,contributionPair.second,contributionPair.third)
+                        val contributionPair =
+                            ContributorsDataState.processContributorsData(it.contributions)
+                        contributorsString = getString(
+                            R.string.contributors,
+                            contributionPair.first,
+                            contributionPair.second,
+                            contributionPair.third
+                        )
                         mBinding.loader.hideView()
                     }
                     is ContributorsDataState.ErrorState -> {
